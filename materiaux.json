@@ -151,7 +151,8 @@
     "m_1789891421733_tx5cqdp": {
       "name": "Oak Door",
       "needed": 4,
-      "createdAt": 1789891421733
+      "createdAt": 1789891421733,
+      "tag": "Bois"
     },
     "m_1789891433049_uwmrprp": {
       "name": "Oak Log",
@@ -334,5 +335,9 @@
   "deletedMaterials": {
     "m_1789891931555_vlv7qa1": 1789891940934
   },
-  "tags": {}
+  "tags": {
+    "Bois": {
+      "createdAt": 1789892521075
+    }
+  }
 }
