@@ -3,22 +3,26 @@
     "m_1789890864698_f2fbcpc": {
       "name": "Andesite",
       "needed": 1030,
-      "createdAt": 1789890864698
+      "createdAt": 1789890864698,
+      "tag": "Pierre"
     },
     "m_1789890887831_i5uyg8v": {
       "name": "Andesite Slab",
       "needed": 19,
-      "createdAt": 1789890887831
+      "createdAt": 1789890887831,
+      "tag": "Pierre"
     },
     "m_1789890901632_pfvzefl": {
       "name": "Andesite Stairs",
       "needed": 39,
-      "createdAt": 1789890901632
+      "createdAt": 1789890901632,
+      "tag": "Pierre"
     },
     "m_1789890927484_mte9vc5": {
       "name": "Andesite Wall",
       "needed": 42,
-      "createdAt": 1789890927484
+      "createdAt": 1789890927484,
+      "tag": "Pierre"
     },
     "m_1789890952562_34hbpbj": {
       "name": "Stone Brick Slab",
