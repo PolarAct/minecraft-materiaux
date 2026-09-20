@@ -1,0 +1,308 @@
+{
+  "materials": {
+    "m_1789890864698_f2fbcpc": {
+      "name": "Andesite",
+      "needed": 1030,
+      "createdAt": 1789890864698
+    },
+    "m_1789890887831_i5uyg8v": {
+      "name": "Andesite Slab",
+      "needed": 19,
+      "createdAt": 1789890887831
+    },
+    "m_1789890901632_pfvzefl": {
+      "name": "Andesite Stairs",
+      "needed": 39,
+      "createdAt": 1789890901632
+    },
+    "m_1789890927484_mte9vc5": {
+      "name": "Andesite Wall",
+      "needed": 42,
+      "createdAt": 1789890927484
+    },
+    "m_1789890952562_34hbpbj": {
+      "name": "Stone Brick Slab",
+      "needed": 17,
+      "createdAt": 1789890952562
+    },
+    "m_1789890983640_i3eiheu": {
+      "name": "Stone Brick Stairs",
+      "needed": 22,
+      "createdAt": 1789890983640
+    },
+    "m_1789890995843_04vvgr4": {
+      "name": "Stone Brick Wall",
+      "needed": 20,
+      "createdAt": 1789890995843
+    },
+    "m_1789891014495_y3zqkyu": {
+      "name": "Stone Brick",
+      "needed": 290,
+      "createdAt": 1789891014495
+    },
+    "m_1789891043518_bbtghnp": {
+      "name": "Stone Button",
+      "needed": 24,
+      "createdAt": 1789891043518
+    },
+    "m_1789891060086_binna81": {
+      "name": "Tuff Brick Slab",
+      "needed": 38,
+      "createdAt": 1789891060086
+    },
+    "m_1789891069293_sgyjzry": {
+      "name": "Tuff Brick Stairs",
+      "needed": 47,
+      "createdAt": 1789891069293
+    },
+    "m_1789891086607_b4ltslz": {
+      "name": "Tuff Brick",
+      "needed": 35,
+      "createdAt": 1789891086607
+    },
+    "m_1789891106534_d7oz3rn": {
+      "name": "Polished Tuff",
+      "needed": 347,
+      "createdAt": 1789891106534
+    },
+    "m_1789891126321_yg9klw9": {
+      "name": "Cobbled Deepslate",
+      "needed": 116,
+      "createdAt": 1789891126321
+    },
+    "m_1789891154476_paxnis1": {
+      "name": "Cobbled Deepslate Slab",
+      "needed": 189,
+      "createdAt": 1789891154476
+    },
+    "m_1789891175831_9pvvz0e": {
+      "name": "Cobbled Deepslate Stairs",
+      "needed": 195,
+      "createdAt": 1789891175831
+    },
+    "m_1789891192012_h3jhkj9": {
+      "name": "Deepslate Tile Slab",
+      "needed": 28,
+      "createdAt": 1789891192012
+    },
+    "m_1789891202110_gyqe0b6": {
+      "name": "Deepslate Tile Stairs",
+      "needed": 5,
+      "createdAt": 1789891202110
+    },
+    "m_1789891229170_ubh43mr": {
+      "name": "Polished Deepslate Slab",
+      "needed": 39,
+      "createdAt": 1789891229170
+    },
+    "m_1789891236370_pg4m753": {
+      "name": "Polished Deepslate Stairs",
+      "needed": 7,
+      "createdAt": 1789891236370
+    },
+    "m_1789891251854_5x0yg2k": {
+      "name": "Polished Diorite",
+      "needed": 37,
+      "createdAt": 1789891251854
+    },
+    "m_1789891259466_tjz2kgr": {
+      "name": "Polished Diorite Stairs",
+      "needed": 28,
+      "createdAt": 1789891259466
+    },
+    "m_1789891267953_qgec13a": {
+      "name": "Calcite",
+      "needed": 54,
+      "createdAt": 1789891267953
+    },
+    "m_1789891276790_b7bhely": {
+      "name": "Sandstone",
+      "needed": 18,
+      "createdAt": 1789891276790
+    },
+    "m_1789891288872_jco2p7x": {
+      "name": "Sandstone Stairs",
+      "needed": 32,
+      "createdAt": 1789891288872
+    },
+    "m_1789891421733_tx5cqdp": {
+      "name": "Oak Door",
+      "needed": 4,
+      "createdAt": 1789891421733
+    },
+    "m_1789891433049_uwmrprp": {
+      "name": "Oak Log",
+      "needed": 646,
+      "createdAt": 1789891433049
+    },
+    "m_1789891444717_7biud1a": {
+      "name": "Oak Planks",
+      "needed": 248,
+      "createdAt": 1789891444717
+    },
+    "m_1789891544968_3kooo5v": {
+      "name": "Oak Sign",
+      "needed": 43,
+      "createdAt": 1789891544968
+    },
+    "m_1789891553103_phyqzn8": {
+      "name": "Oak Slab",
+      "needed": 25,
+      "createdAt": 1789891553103
+    },
+    "m_1789891563283_ojaecdb": {
+      "name": "Oak Stairs",
+      "needed": 245,
+      "createdAt": 1789891563283
+    },
+    "m_1789891574042_3o0hc1u": {
+      "name": "Oak Trapdoor",
+      "needed": 116,
+      "createdAt": 1789891574042
+    },
+    "m_1789891588367_dig0wp8": {
+      "name": "Spruce Door",
+      "needed": 10,
+      "createdAt": 1789891588367
+    },
+    "m_1789891604674_xqnyax1": {
+      "name": "Spruce Frence",
+      "needed": 143,
+      "createdAt": 1789891604674
+    },
+    "m_1789891617949_9sjq60p": {
+      "name": "Spruce Fence Gate",
+      "needed": 245,
+      "createdAt": 1789891617949
+    },
+    "m_1789891629743_9fw9p1u": {
+      "name": "Spruce Planks",
+      "needed": 319,
+      "createdAt": 1789891629743
+    },
+    "m_1789891638022_oh6bt8k": {
+      "name": "Spruce Sign",
+      "needed": 126,
+      "createdAt": 1789891638022
+    },
+    "m_1789891649604_go042zc": {
+      "name": "Spruce Slab",
+      "needed": 294,
+      "createdAt": 1789891649604
+    },
+    "m_1789891680114_w66z45s": {
+      "name": "Spruce Stairs",
+      "needed": 468,
+      "createdAt": 1789891680114
+    },
+    "m_1789891694503_i9ybw2h": {
+      "name": "Spruce Trapdoor",
+      "needed": 501,
+      "createdAt": 1789891694503
+    },
+    "m_1789891714726_via83ez": {
+      "name": "Jungle Planks",
+      "needed": 916,
+      "createdAt": 1789891714726
+    },
+    "m_1789891723076_5rbk92c": {
+      "name": "Jungle Slab",
+      "needed": 259,
+      "createdAt": 1789891723076
+    },
+    "m_1789891731179_4vm2nd8": {
+      "name": "Jungle Stairs",
+      "needed": 11,
+      "createdAt": 1789891731179
+    },
+    "m_1789891740548_021dzud": {
+      "name": "Jungle Trapdoor",
+      "needed": 23,
+      "createdAt": 1789891740548
+    },
+    "m_1789891746172_3yogr8z": {
+      "name": "Ladder",
+      "needed": 11,
+      "createdAt": 1789891746172
+    },
+    "m_1789891766215_6m4iekw": {
+      "name": "Stripped Birch Wood",
+      "needed": 122,
+      "createdAt": 1789891766215
+    },
+    "m_1789891782268_3jranba": {
+      "name": "Stripped Oak Log",
+      "needed": 64,
+      "createdAt": 1789891782268
+    },
+    "m_1789891794633_2ysel6n": {
+      "name": "Stripped Oak Wood",
+      "needed": 194,
+      "createdAt": 1789891794633
+    },
+    "m_1789891807800_hdmcz82": {
+      "name": "Stripped Spruce Log",
+      "needed": 291,
+      "createdAt": 1789891807800
+    },
+    "m_1789891819230_viny28t": {
+      "name": "Barrel",
+      "needed": 5,
+      "createdAt": 1789891819230
+    },
+    "m_1789891843316_xs4rofl": {
+      "name": "Birch Trapdoor",
+      "needed": 30,
+      "createdAt": 1789891843316
+    },
+    "m_1789891863998_lujdp2a": {
+      "name": "Dark Oak Trapdoor",
+      "needed": 72,
+      "createdAt": 1789891863998
+    },
+    "m_1789891873460_atx6m8j": {
+      "name": "Loom",
+      "needed": 105,
+      "createdAt": 1789891873460
+    },
+    "m_1789891892213_rofm48r": {
+      "name": "Mud Brick Wall",
+      "needed": 56,
+      "createdAt": 1789891892213
+    },
+    "m_1789891902849_odmnc3p": {
+      "name": "Lantern",
+      "needed": 30,
+      "createdAt": 1789891902849
+    },
+    "m_1789891918918_0rn58hr": {
+      "name": "Light Gray Wool",
+      "needed": 14,
+      "createdAt": 1789891918918
+    },
+    "m_1789891956895_ybnuvdm": {
+      "name": "Lightning Rod",
+      "needed": 1,
+      "createdAt": 1789891956895
+    },
+    "m_1789891965818_px4v4x1": {
+      "name": "Flower Pot",
+      "needed": 12,
+      "createdAt": 1789891965818
+    },
+    "m_1789891976819_cztie27": {
+      "name": "Grindstone",
+      "needed": 2,
+      "createdAt": 1789891976819
+    },
+    "m_1789891982957_dfytdmh": {
+      "name": "Chain",
+      "needed": 18,
+      "createdAt": 1789891982957
+    }
+  },
+  "adds": {},
+  "deletedMaterials": {
+    "m_1789891931555_vlv7qa1": 1789891940934
+  }
+}
