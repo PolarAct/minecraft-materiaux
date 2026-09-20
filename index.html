@@ -1,1 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suivi de matériaux (GitHub)</title>
+<style>
+  :root {
+    --bg: #17181c; --card: #212228; --card-border: #2f3038;
+    --text: #f0f0f2; --text-dim: #a3a4ad; --accent: #5cc26f;
+    --danger: #d9534f; --track: #2a2b32; --input-bg: #292a31; --warn: #e0a83c;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-dim); font-size: 13px; margin: 0 0 14px; }
+  .status-bar {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background: var(--card); border:1px solid var(--card-border); border-radius:12px;
+    padding: 10px 14px; margin-bottom:14px; font-size:13px;
+  }
+  .status-bar .dot { width:8px; height:8px; border-radius:50%; background:var(--text-dim); flex-shrink:0; }
+  .status-bar .dot.ok { background: var(--accent); }
+  .status-bar .dot.err { background: var(--danger); }
+  .status-bar .dot.busy { background: var(--warn); }
+  .status-text { color: var(--text-dim); flex:1; min-width: 120px; }
+  .repo-tag { color: var(--text-dim); font-size:11px; }
+  .stats { display:flex; gap:10px; margin: 14px 0; flex-wrap:wrap; }
+  .stat { background:var(--card); border:1px solid var(--card-border); border-radius:12px; padding:10px 14px; flex:1; min-width:100px; }
+  .stat .num { font-size:20px; font-weight:700; }
+  .stat .lab { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; }
+  .toolbar { display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  input[type=text], input[type=number] {
+    background: var(--input-bg); border:1px solid var(--card-border); border-radius:10px;
+    padding:10px 12px; color:var(--text); font-size:14px; outline:none;
+  }
+  input:focus { border-color: var(--accent); }
+  #search { flex:1; min-width:140px; }
+  button { border:none; border-radius:10px; padding:10px 14px; font-size:14px; font-weight:600; cursor:pointer; }
+  .btn-accent { background: var(--accent); color:#08240f; }
+  .btn-primary { background:#4a90e2; color:#fff; }
+  .btn-ghost { background: var(--card); color: var(--text); border:1px solid var(--card-border); }
+  .btn-danger { background:transparent; color:var(--danger); border:1px solid var(--danger); padding:6px 10px; font-size:12px; }
+  .btn-small { padding:6px 10px; font-size:12px; border-radius:8px; }
+  .btn-pin { background: transparent; border:1px solid var(--card-border); color: var(--text-dim); padding:6px 9px; font-size:13px; border-radius:8px; }
+  .btn-pin.active { background: var(--warn); color:#3a2a00; border-color: var(--warn); }
+
+  #addForm { display:none; background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:14px; margin-bottom:16px; gap:10px; flex-wrap:wrap; }
+  #addForm.open { display:flex; }
+  #addForm input[type=text] { flex:2; min-width:120px; }
+  #addForm input[type=number] { flex:1; min-width:90px; }
+  #addForm input#newTag { flex:1; min-width:120px; }
+
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .chip {
+    background: var(--input-bg); border:1px solid var(--card-border); color: var(--text-dim);
+    padding:6px 12px; border-radius:999px; font-size:12px; cursor:pointer; font-weight:600;
+  }
+  .chip.active { background: var(--accent); color:#08240f; border-color: var(--accent); }
+
+  .card { background:var(--card); border:1px solid var(--card-border); border-radius:14px; padding:14px; margin-bottom:10px; position:relative; }
+  .card.pinned { border-color: var(--warn); }
+  .card-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+  .card-name-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .card-name { font-size:16px; font-weight:700; }
+  .tag-badge {
+    display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;
+    color:#0a0a0c;
+  }
+  .card-sub { font-size:12px; color:var(--text-dim); margin-top:2px; }
+  .card-sub span.remaining-done { color: var(--accent); }
+  .track { height:8px; background:var(--track); border-radius:6px; overflow:hidden; margin:8px 0 10px; }
+  .fill { height:100%; background:var(--accent); border-radius:6px; transition:width .25s; }
+  .card-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .card-actions { display:flex; gap:6px; align-items:flex-start; flex-shrink:0; }
+  .qty-input { width:84px; }
+  .empty { text-align:center; color:var(--text-dim); padding:40px 10px; font-size:14px; }
+  .section-label { font-size:11px; color: var(--text-dim); text-transform:uppercase; letter-spacing:.05em; margin: 16px 0 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧱 Suivi de matériaux</h1>
+  <p class="subtitle">Synchronisé via GitHub — actualise pour voir les changements des autres, sauvegarde pour partager les tiens.</p>
+
+  <div class="status-bar">
+    <span class="dot" id="statusDot"></span>
+    <span class="status-text" id="statusText">Chargement...</span>
+    <span class="repo-tag" id="repoTag"></span>
+    <button class="btn-primary btn-small" id="refreshBtn">🔄 Actualiser</button>
+    <button class="btn-accent btn-small" id="saveBtn">💾 Sauvegarder</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="statTotal">0</div><div class="lab">Matériaux</div></div>
+    <div class="stat"><div class="num" id="statDone">0</div><div class="lab">Complets</div></div>
+    <div class="stat"><div class="num" id="statRemaining">0</div><div class="lab">En cours</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Rechercher un matériau...">
+    <button class="btn-accent" id="toggleAdd">+ Ajouter un matériau</button>
+  </div>
+
+  <div id="addForm">
+    <input type="text" id="newName" placeholder="Nom (ex: Spruce Planks)">
+    <input type="number" id="newNeeded" placeholder="Quantité voulue" min="1">
+    <input type="text" id="newTag" placeholder="Tag (ex: Pierre)" list="tagOptions">
+    <datalist id="tagOptions"></datalist>
+    <button class="btn-accent" id="submitAdd">Ajouter</button>
+    <button class="btn-ghost" id="cancelAdd">Annuler</button>
+  </div>
+
+  <div class="chips" id="tagChips"></div>
+
+  <div id="list"></div>
+  <div id="emptyState" class="empty" style="display:none;">Aucun matériau pour l'instant. Ajoute-en un, ou clique sur Actualiser si tes potes ont déjà commencé.</div>
+</div>
+
+<script>
+(function(){
+  // ---- Config (embedded) ----
+  var CONFIG = {
+    owner: "PolarAct",
+    repo: "minecraft-materiaux",
+    path: "materiaux.json",
+    branch: "main",
+    token: "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"
+  };
+  var LOCAL_CACHE_KEY = "mc_gh_cache_" + CONFIG.owner + "_" + CONFIG.repo;
+
+  var state = { materials: {}, adds: {}, deletedMaterials: {}, tags: {} };
+  var sha = null;
+  var activeTag = "__all__";
+
+  document.getElementById('repoTag').textContent = CONFIG.owner + '/' + CONFIG.repo;
+
+  function uid(prefix){ return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,9); }
+  function nowStr(){ return new Date().toLocaleTimeString('fr-FR'); }
+
+  function setStatus(text, kind){
+    document.getElementById('statusText').textContent = text;
+    var dot = document.getElementById('statusDot');
+    dot.className = 'dot' + (kind ? ' ' + kind : '');
+  }
+
+  // deterministic pastel color per tag name
+  function tagColor(tag){
+    var str = tag || '';
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
+    var hue = Math.abs(hash) % 360;
+    return 'hsl(' + hue + ', 65%, 62%)';
+  }
+
+  // ---- base64 helpers (unicode safe) ----
+  function b64EncodeUnicode(str){
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(m, p1){
+      return String.fromCharCode('0x' + p1);
+    }));
+  }
+  function b64DecodeUnicode(str){
+    return decodeURIComponent(atob(str).split('').map(function(c){
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  }
+
+  // ---- local cache (safety net before saving) ----
+  function loadCache(){
+    try {
+      var raw = localStorage.getItem(LOCAL_CACHE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        state = Object.assign({ materials:{}, adds:{}, deletedMaterials:{}, tags:{} }, parsed);
+      }
+    } catch(e){}
+  }
+  function saveCache(){
+    try { localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  // ---- GitHub API ----
+  function explainNetworkError(e){
+    if (e instanceof TypeError) {
+      return new Error("Connexion à GitHub impossible (réseau, pare-feu, ou navigateur qui bloque les requêtes depuis un fichier local). Vérifie ta connexion internet, et si ça persiste, essaie d'ouvrir le fichier avec Chrome plutôt qu'un autre navigateur.");
+    }
+    return e;
+  }
+
+  async function ghGetFile(){
+    var url = 'https://api.github.com/repos/' + CONFIG.owner + '/' + CONFIG.repo + '/contents/' + CONFIG.path + '?ref=' + CONFIG.branch;
+    var res;
+    try {
+      res = await fetch(url, {
+        cache: 'no-store',
+        headers: {
+          'Authorization': 'Bearer ' + CONFIG.token,
+          'Accept': 'application/vnd.github+json',
+          'Cache-Control': 'no-cache'
+        }
+      });
+    } catch(e){ throw explainNetworkError(e); }
+    if (res.status === 404) return { data: null, sha: null };
+    if (!res.ok) throw new Error('Lecture GitHub échouée (' + res.status + ')');
+    var json = await res.json();
+    var content = b64DecodeUnicode(json.content.replace(/\n/g, ''));
+    var data;
+    try { data = JSON.parse(content); } catch(e){ data = { materials:{}, adds:{}, deletedMaterials:{}, tags:{} }; }
+    return { data: data, sha: json.sha };
+  }
+
+  async function ghPutFile(dataObj, currentSha, message){
+    var url = 'https://api.github.com/repos/' + CONFIG.owner + '/' + CONFIG.repo + '/contents/' + CONFIG.path;
+    var body = {
+      message: message || 'Mise à jour matériaux',
+      content: b64EncodeUnicode(JSON.stringify(dataObj, null, 2)),
+      branch: CONFIG.branch
+    };
+    if (currentSha) body.sha = currentSha;
+    var res;
+    try {
+      res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + CONFIG.token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+    } catch(e){ throw explainNetworkError(e); }
+    if (!res.ok) {
+      var txt = '';
+      try { txt = (await res.json()).message; } catch(e){}
+      var err = new Error('Écriture GitHub échouée (' + res.status + ') ' + txt);
+      err.status = res.status;
+      throw err;
+    }
+    var json = await res.json();
+    return json.content.sha;
+  }
+
+  function wait(ms){ return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
+
+  function mergeStates(remote, local){
+    remote = remote || { materials:{}, adds:{}, deletedMaterials:{}, tags:{} };
+    local = local || { materials:{}, adds:{}, deletedMaterials:{}, tags:{} };
+    var deletedMaterials = Object.assign({}, remote.deletedMaterials || {}, local.deletedMaterials || {});
+    var materials = Object.assign({}, remote.materials || {}, local.materials || {});
+    var adds = Object.assign({}, remote.adds || {}, local.adds || {});
+    var tags = Object.assign({}, remote.tags || {}, local.tags || {});
+    Object.keys(deletedMaterials).forEach(function(id){ delete materials[id]; });
+    Object.keys(adds).forEach(function(id){
+      if (adds[id] && deletedMaterials[adds[id].materialId]) delete adds[id];
+    });
+    return { materials: materials, adds: adds, deletedMaterials: deletedMaterials, tags: tags };
+  }
+
+  function registerTag(tag){
+    tag = (tag || '').trim();
+    if (!tag) return;
+    if (!state.tags[tag]) state.tags[tag] = { createdAt: Date.now() };
+  }
+
+  // Compatibilité : reconstruit le registre à partir des tags déjà posés
+  // sur des matériaux (utile si les données ont été sauvegardées par une
+  // version de l'appli antérieure au registre de tags partagé).
+  function backfillTagsFromMaterials(){
+    Object.keys(state.materials).forEach(function(id){
+      var t = state.materials[id].tag;
+      if (t) registerTag(t);
+    });
+  }
+
+  // ---- mutations (local, optimistic) ----
+  function addMaterial(name, needed, tag){
+    var id = uid('m');
+    state.materials[id] = { name: name, needed: needed, createdAt: Date.now(), tag: tag || '', pinned: false, pinnedAt: 0 };
+    registerTag(tag);
+    saveCache(); render();
+  }
+  function addFarmed(materialId, amount){
+    if (!amount || amount <= 0) return;
+    var id = uid('a');
+    state.adds[id] = { materialId: materialId, amount: amount, createdAt: Date.now() };
+    saveCache(); render();
+  }
+  function updateNeeded(materialId, needed){
+    if (state.materials[materialId]) {
+      state.materials[materialId].needed = needed;
+      saveCache(); render();
+    }
+  }
+  function updateTag(materialId, tag){
+    if (state.materials[materialId]) {
+      state.materials[materialId].tag = tag || '';
+      registerTag(tag);
+      saveCache(); render();
+    }
+  }
+  function togglePin(materialId){
+    var m = state.materials[materialId];
+    if (!m) return;
+    m.pinned = !m.pinned;
+    m.pinnedAt = m.pinned ? Date.now() : 0;
+    saveCache(); render();
+  }
+  function deleteMaterial(materialId){
+    delete state.materials[materialId];
+    state.deletedMaterials[materialId] = Date.now();
+    Object.keys(state.adds).forEach(function(id){
+      if (state.adds[id].materialId === materialId) delete state.adds[id];
+    });
+    saveCache(); render();
+  }
+
+  // ---- refresh / save ----
+  function setButtonsDisabled(disabled){
+    document.getElementById('refreshBtn').disabled = disabled;
+    document.getElementById('saveBtn').disabled = disabled;
+  }
+
+  async function doRefresh(){
+    setStatus('Actualisation...', 'busy');
+    setButtonsDisabled(true);
+    try {
+      var res = await ghGetFile();
+      sha = res.sha;
+      state = mergeStates(res.data, state);
+      backfillTagsFromMaterials();
+      saveCache();
+      render();
+      setStatus('Actualisé à ' + nowStr(), 'ok');
+    } catch(e){
+      setStatus('Erreur : ' + e.message, 'err');
+    } finally {
+      setButtonsDisabled(false);
+    }
+  }
+
+  async function doSave(){
+    setStatus('Sauvegarde...', 'busy');
+    setButtonsDisabled(true);
+    var maxAttempts = 4;
+    try {
+      for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          var res = await ghGetFile();
+          var merged = mergeStates(res.data, state);
+          state = merged;
+          backfillTagsFromMaterials();
+          merged = state;
+          var newSha = await ghPutFile(merged, res.sha, 'Mise à jour matériaux — ' + nowStr());
+          sha = newSha;
+          saveCache();
+          render();
+          setStatus('Sauvegardé à ' + nowStr(), 'ok');
+          return;
+        } catch(e){
+          var isConflict = e.status === 409;
+          if (isConflict && attempt < maxAttempts) {
+            setStatus('Conflit détecté, nouvelle tentative (' + attempt + '/' + (maxAttempts - 1) + ')...', 'busy');
+            await wait(400 * attempt);
+            continue;
+          }
+          setStatus('Erreur : ' + e.message, 'err');
+          return;
+        }
+      }
+    } finally {
+      setButtonsDisabled(false);
+    }
+  }
+
+  // ---- rendering ----
+  function stacksLabel(n){
+    n = Math.max(0, Math.round(n));
+    if (n < 64) return n + ' bloc' + (n === 1 ? '' : 's');
+    var stacks = Math.floor(n/64), rest = n % 64;
+    var s = stacks + ' stack' + (stacks > 1 ? 's' : '');
+    if (rest > 0) s += ' + ' + rest;
+    return s;
+  }
+  function farmedFor(materialId){
+    var total = 0;
+    Object.keys(state.adds).forEach(function(id){
+      var a = state.adds[id];
+      if (a.materialId === materialId) total += Number(a.amount) || 0;
+    });
+    return total;
+  }
+
+  function renderTagChips(allItems){
+    var chipsEl = document.getElementById('tagChips');
+    var tagList = Object.keys(state.tags || {}).sort(function(a,b){ return a.localeCompare(b); });
+
+    // keep datalist in sync for the add form
+    var datalist = document.getElementById('tagOptions');
+    datalist.innerHTML = '';
+    tagList.forEach(function(t){
+      var opt = document.createElement('option'); opt.value = t; datalist.appendChild(opt);
+    });
+
+    chipsEl.innerHTML = '';
+    if (tagList.length === 0) return;
+
+    var allChip = document.createElement('div');
+    allChip.className = 'chip' + (activeTag === '__all__' ? ' active' : '');
+    allChip.textContent = 'Tous';
+    allChip.onclick = function(){ activeTag = '__all__'; render(); };
+    chipsEl.appendChild(allChip);
+
+    tagList.forEach(function(t){
+      var chip = document.createElement('div');
+      chip.className = 'chip' + (activeTag === t ? ' active' : '');
+      chip.textContent = t;
+      if (activeTag === t) chip.style.background = tagColor(t);
+      chip.onclick = function(){ activeTag = t; render(); };
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  function render(){
+    var listEl = document.getElementById('list');
+    var searchVal = (document.getElementById('search').value || '').toLowerCase();
+
+    var allItems = Object.keys(state.materials).map(function(id){
+      var d = state.materials[id];
+      return {
+        id: id, name: d.name, needed: d.needed, createdAt: d.createdAt || 0,
+        tag: d.tag || '', pinned: !!d.pinned, pinnedAt: d.pinnedAt || 0,
+        farmed: farmedFor(id)
+      };
+    });
+
+    renderTagChips(allItems);
+
+    var items = allItems.filter(function(it){
+      var matchesTag = activeTag === '__all__' || it.tag === activeTag;
+      var matchesSearch = !searchVal || it.name.toLowerCase().indexOf(searchVal) !== -1;
+      return matchesTag && matchesSearch;
+    });
+
+    // pinned items first (most recently pinned first), then the rest in creation order
+    items.sort(function(a,b){
+      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+      if (a.pinned && b.pinned) return b.pinnedAt - a.pinnedAt;
+      return a.createdAt - b.createdAt;
+    });
+
+    document.getElementById('statTotal').textContent = allItems.length;
+    var done = allItems.filter(function(it){ return it.farmed >= it.needed; }).length;
+    document.getElementById('statDone').textContent = done;
+    document.getElementById('statRemaining').textContent = allItems.length - done;
+    document.getElementById('emptyState').style.display = allItems.length === 0 ? 'block' : 'none';
+
+    listEl.innerHTML = '';
+    items.forEach(function(it){
+      var remaining = Math.max(0, it.needed - it.farmed);
+      var pct = it.needed > 0 ? Math.min(100, Math.round((it.farmed / it.needed) * 100)) : 0;
+
+      var card = document.createElement('div'); card.className = 'card' + (it.pinned ? ' pinned' : '');
+      var top = document.createElement('div'); top.className = 'card-top';
+      var nameWrap = document.createElement('div');
+
+      var nameRow = document.createElement('div'); nameRow.className = 'card-name-row';
+      var nameEl = document.createElement('div'); nameEl.className = 'card-name'; nameEl.textContent = (it.pinned ? '📌 ' : '') + it.name;
+      nameRow.appendChild(nameEl);
+      if (it.tag) {
+        var badge = document.createElement('span'); badge.className = 'tag-badge';
+        badge.textContent = it.tag; badge.style.background = tagColor(it.tag);
+        nameRow.appendChild(badge);
+      }
+      var subEl = document.createElement('div'); subEl.className = 'card-sub';
+      var remainingText = remaining === 0 ? '<span class="remaining-done">Terminé ✔</span>' : ('Reste ' + remaining + ' (' + stacksLabel(remaining) + ')');
+      subEl.innerHTML = 'Voulu: ' + it.needed + ' (' + stacksLabel(it.needed) + ') · Farmé: ' + it.farmed + ' · ' + remainingText;
+      nameWrap.appendChild(nameRow); nameWrap.appendChild(subEl);
+
+      var actions = document.createElement('div'); actions.className = 'card-actions';
+      var pinBtn = document.createElement('button'); pinBtn.className = 'btn-pin' + (it.pinned ? ' active' : ''); pinBtn.textContent = '📌';
+      pinBtn.title = it.pinned ? 'Désépingler' : 'Épingler en haut';
+      pinBtn.onclick = function(){ togglePin(it.id); };
+      var delBtn = document.createElement('button'); delBtn.className = 'btn-danger'; delBtn.textContent = '✕';
+      delBtn.onclick = function(){ if (confirm('Supprimer "' + it.name + '" ?')) deleteMaterial(it.id); };
+      actions.appendChild(pinBtn); actions.appendChild(delBtn);
+
+      top.appendChild(nameWrap); top.appendChild(actions);
+
+      var track = document.createElement('div'); track.className = 'track';
+      var fill = document.createElement('div'); fill.className = 'fill'; fill.style.width = pct + '%';
+      track.appendChild(fill);
+
+      var row = document.createElement('div'); row.className = 'card-row';
+      var qtyInput = document.createElement('input'); qtyInput.type = 'number'; qtyInput.className = 'qty-input'; qtyInput.placeholder = 'Qté'; qtyInput.min = '1';
+      var addBtn = document.createElement('button'); addBtn.className = 'btn-accent btn-small'; addBtn.textContent = '+ Farmé';
+      addBtn.onclick = function(){ var v = parseInt(qtyInput.value, 10); if (v > 0) { addFarmed(it.id, v); qtyInput.value = ''; } };
+      qtyInput.addEventListener('keydown', function(ev){ if (ev.key === 'Enter') addBtn.click(); });
+
+      var quick1 = document.createElement('button'); quick1.className = 'btn-ghost btn-small'; quick1.textContent = '+1';
+      quick1.onclick = function(){ addFarmed(it.id, 1); };
+      var quickStack = document.createElement('button'); quickStack.className = 'btn-ghost btn-small'; quickStack.textContent = '+1 stack (64)';
+      quickStack.onclick = function(){ addFarmed(it.id, 64); };
+      var editBtn = document.createElement('button'); editBtn.className = 'btn-ghost btn-small'; editBtn.textContent = 'Objectif';
+      editBtn.onclick = function(){
+        var val = prompt('Nouvelle quantité voulue pour "' + it.name + '" :', it.needed);
+        if (val === null) return;
+        var n = parseInt(val, 10);
+        if (n > 0) updateNeeded(it.id, n);
+      };
+      var tagBtn = document.createElement('button'); tagBtn.className = 'btn-ghost btn-small'; tagBtn.textContent = 'Tag';
+      tagBtn.onclick = function(){
+        var val = prompt('Tag pour "' + it.name + '" (laisse vide pour retirer) :', it.tag);
+        if (val === null) return;
+        updateTag(it.id, val.trim());
+      };
+
+      row.appendChild(quick1); row.appendChild(quickStack); row.appendChild(qtyInput); row.appendChild(addBtn);
+      row.appendChild(editBtn); row.appendChild(tagBtn);
+      card.appendChild(top); card.appendChild(track); card.appendChild(row);
+      listEl.appendChild(card);
+    });
+  }
+
+  // ---- wiring ----
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('toggleAdd').addEventListener('click', function(){
+    document.getElementById('addForm').classList.add('open');
+    document.getElementById('newName').focus();
+  });
+  document.getElementById('cancelAdd').addEventListener('click', function(){
+    document.getElementById('addForm').classList.remove('open');
+  });
+  document.getElementById('submitAdd').addEventListener('click', function(){
+    var name = document.getElementById('newName').value.trim();
+    var needed = parseInt(document.getElementById('newNeeded').value, 10);
+    var tag = document.getElementById('newTag').value.trim();
+    if (!name || !needed || needed <= 0) { alert('Entre un nom et une quantité valide.'); return; }
+    addMaterial(name, needed, tag);
+    document.getElementById('newName').value = '';
+    document.getElementById('newNeeded').value = '';
+    document.getElementById('newTag').value = '';
+    document.getElementById('addForm').classList.remove('open');
+  });
+  document.getElementById('refreshBtn').addEventListener('click', doRefresh);
+  document.getElementById('saveBtn').addEventListener('click', doSave);
+
+  loadCache();
+  backfillTagsFromMaterials();
+  render();
+  doRefresh();
+})();
+</script>
+</body>
+</html>
 
